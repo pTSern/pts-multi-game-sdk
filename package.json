@@ -1,0 +1,42 @@
+{
+    "$schema": "./@types/schema/package/index.json",
+    "package_version": 2,
+    "name": "pts-multi-game-sdk",
+    "version": "1.0.0",
+    "author": "pTSern",
+    "editor": ">=3.8.8",
+    "scripts": {
+        "preinstall": "node ./scripts/preinstall.js",
+        "build": "tsc",
+        "watch": "tsc -w"
+    },
+    "description": "i18n:pts-multi-game-sdk.description",
+    "main": "./dist/main.js",
+    "devDependencies": {
+        "@cocos/creator-types": "^3.8.8",
+        "@types/node": "^18.17.1",
+        "typescript": "^5.8.2"
+    },
+    "contributions": {
+        "menu": [
+            {
+                "path": "i18n:pts-multi-game-sdk",
+                "label": "i18n:pts-multi-game-sdk.show_log",
+                "message": "show-log"
+            }
+        ],
+        "messages": {
+            "show-log": {
+                "methods": [
+                    "showLog"
+                ]
+            }
+        },
+        "asset-db": {
+            "mount": {
+                "path": "./assets",
+                "readonly": true
+            }
+        }
+    }
+}
