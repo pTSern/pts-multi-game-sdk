@@ -13,29 +13,228 @@
     "description": "i18n:pts-multi-game-sdk.description",
     "main": "./bootstrap.js",
     "devDependencies": {
-        "@cocos/creator-types": "^3.8.8",
+        "@cocos/creator-types": "^3.8.0",
         "@types/node": "^18.17.1",
         "typescript": "^5.8.2"
     },
     "contributions": {
-        "menu": [
-            {
-                "path": "i18n:pts-multi-game-sdk",
-                "label": "i18n:pts-multi-game-sdk.show_log",
-                "message": "show-log"
-            }
-        ],
-        "messages": {
-            "show-log": {
-                "methods": [
-                    "showLog"
-                ]
-            }
-        },
+
         "asset-db": {
             "mount": {
                 "path": "./assets",
                 "readonly": true
+            }
+        },
+        "profile": {
+            "project": {
+                "global_variable_key_mg": {
+                    "default": "pTS.settings",
+                    "message": "profile::project::changed",
+                    "label": "Global Variable Key"
+                },
+                "head_version": {
+                    "default": 1,
+                    "message": "profile::project::changed",
+                    "label": "Head Version",
+                    "tooltip": "The number tell what is the big version it is.\nExample: `X.1.2`"
+                },
+                "sub_version": {
+                    "default": 0,
+                    "message": "profile::project::changed",
+                    "label": "Sub Version"
+                },
+                "tail_version": {
+                    "default": 1,
+                    "message": "profile::project::changed",
+                    "label": "Tail Version"
+                },
+                "prefix_key": {
+                    "default": "game$_$",
+                    "message": "profile::project::changed",
+                    "label": "Prefix Key"
+                },
+                "storage_location": {
+                    "default": "null",
+                    "message": "profile::project::changed",
+                    "label": "Storage Location"
+                },
+                "btn_save": {
+                    "default": false,
+                    "message": "profile::project::save",
+                    "label": "Btn Save",
+                    "data": "Save",
+                    "value": "Save 2"
+                },
+                "plugin_name_mg": {
+                    "default": "_game_data_manager",
+                    "message": "profile::project::changed_location",
+                    "label": "Plugin Name"
+                },
+                "plugin_location_mg": {
+                    "default": "",
+                    "message": "profile::project::changed_location",
+                    "label": "Plugin Location"
+                },
+                "game_distribution_game_id": {
+                    "default": "",
+                    "label": "Game Id",
+                    "message": "profile::project::game_distribution::changed_game_id"
+                },
+                "target_platform": {
+                    "default": "game_distribution",
+                    "label": "Target Platform",
+                    "message": "profile::project::target_platform_changed"
+                }
+            }
+        },
+        "project": {
+            "tab_1": {
+                "label": "Data Manager",
+                "content": {
+                    "head_version": {
+                        "ui": "ui-num-input",
+                        "attributes": {
+                            "min": 0,
+                            "step": 1
+                        }
+                    },
+                    "sub_version": {
+                        "ui": "ui-num-input",
+                        "attributes": {
+                            "min": 0,
+                            "step": 1,
+                            "max": 9,
+                            "tooltip": "The middle number stay inside the string of version.\nExample: `1.X.2`"
+                        }
+                    },
+                    "tail_version": {
+                        "ui": "ui-num-input",
+                        "attributes": {
+                            "min": 0,
+                            "step": 1,
+                            "max": 9,
+                            "tooltip": "The last number stay inside the string of version.\nExample: `1.1.X`"
+                        }
+                    },
+                    "prefix_key": {
+                        "ui": "ui-input",
+                        "attributes": {
+                            "placeholder": "The prefix of the key of game's data.",
+                            "show-clear": true
+                        }
+                    },
+                    "target_platform": {
+                        "ui": "ui-select",
+                        "items": [
+                            { "value": "game_distribution", "label": "Game Distribution" },
+                            { "value": "tiktok", "label": "TikTok" },
+                            { "value": "crazy_game", "label": "Crazy Game" }
+                        ]
+                    },
+                    "btn_save": {
+                        "ui": "ui-button",
+                        "attributes": {
+                            "type": "primary",
+                            "id": "profile::project::btn_save_id",
+                            "label": "Save"
+                        },
+                        "value": "Save 1",
+                        "data": "Save 2"
+                    }
+                }
+            },
+            "tab_2": {
+                "label": "Options",
+                "content": {
+                    "global_variable_key_mg": {
+                        "ui": "ui-input",
+                        "attributes": {
+                            "tooltip": "The key that storage this config on global variable. \nUse `.` for chain object.",
+                            "show-clear": true
+                        }
+                    },
+                    "storage_location": {
+                        "ui": "ui-select",
+                        "items": [
+                            {
+                                "value": "null",
+                                "label": "Nothing"
+                            },
+                            {
+                                "value": "local",
+                                "label": "Local"
+                            },
+                            {
+                                "value": "global",
+                                "label": "Global"
+                            }
+                        ]
+                    },
+                    "plugin_name_mg": {
+                        "ui": "ui-input",
+                        "attributes": {
+                            "show-clear": true
+                        }
+                    },
+                    "plugin_location_mg": {
+                        "ui": "ui-file",
+                        "attributes": {
+                            "protocols": "project",
+                            "value": "project://assets/",
+                            "type": "directory"
+                        }
+                    }
+                }
+            },
+            "tab_3": {
+                "label": "Game Distribution",
+                "content": {
+                    "game_distribution_game_id": {
+                        "ui": "ui-input",
+                        "attributes": {
+                            "show-clear": true,
+                            "placeholder": "Place your game id here"
+                        }
+                    }
+                }
+            },
+            "tab_4": {
+                "label": "TikTok",
+                "content": {
+                }
+            },
+            "tab_5": {
+                "label": "Crazy Game",
+                "content": {
+
+                }
+            }
+        },
+        "messages": {
+            "profile::project::game_distribution::changed_game_id": {
+                "methods": [
+                    "onChangedGameId"
+                ]
+            },
+            "profile::project::target_platform_changed": {
+                "methods": [
+                    "onChangedPlatform"
+                ]
+            },
+            "profile::project::changed_location": {
+                "methods": [
+                    "onChangedLocation"
+                ]
+            },
+            "profile::project::changed": {
+                "methods": [
+                    "onChangedSetting"
+                ]
+            },
+            "profile::project::save": {
+                "methods": [
+                    "onSaved"
+                ]
             }
         }
     }
