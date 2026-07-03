@@ -11,7 +11,7 @@
         "watch": "tsc -w"
     },
     "description": "i18n:pts-multi-game-sdk.description",
-    "main": "./dist/main.js",
+    "main": "./bootstrap.js",
     "devDependencies": {
         "@cocos/creator-types": "^3.8.8",
         "@types/node": "^18.17.1",
