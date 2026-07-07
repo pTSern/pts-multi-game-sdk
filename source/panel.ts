@@ -291,8 +291,9 @@ export const ready = async function(this: any) {
     });
 
     // Tab Switching
-    const sidebarItems = this.shadowRoot.querySelectorAll('.sidebar-item');
-    const tabContents = this.shadowRoot.querySelectorAll('.tab-content');
+    const root = this.shadowRoot || this;
+    const sidebarItems = root.querySelectorAll('.sidebar-item');
+    const tabContents = root.querySelectorAll('.tab-content');
 
     sidebarItems.forEach((item: any) => {
         item.addEventListener('click', () => {
@@ -301,7 +302,7 @@ export const ready = async function(this: any) {
 
             tabContents.forEach((content: any) => content.style.display = 'none');
             const tabId = item.getAttribute('data-tab');
-            const targetContent = this.shadowRoot.querySelector(`.tab-content-${tabId}`) as any;
+            const targetContent = root.querySelector(`.tab-content-${tabId}`) as any;
             if (targetContent) targetContent.style.display = 'flex';
 
             this.$.sidebar.classList.remove('show');
