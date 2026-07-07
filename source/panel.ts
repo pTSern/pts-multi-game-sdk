@@ -39,7 +39,11 @@ export const template = `
         </ui-prop>
         <ui-prop>
             <ui-label slot="label">Target Platform</ui-label>
-            <ui-select slot="content" class="target-platform"></ui-select>
+            <ui-select slot="content" class="target-platform">
+                <option value="game_distribution">Game Distribution</option>
+                <option value="tiktok">TikTok</option>
+                <option value="crazy_game">Crazy Game</option>
+            </ui-select>
         </ui-prop>
     </div>
 
@@ -51,7 +55,11 @@ export const template = `
         </ui-prop>
         <ui-prop>
             <ui-label slot="label">Storage Location</ui-label>
-            <ui-select slot="content" class="storage-location"></ui-select>
+            <ui-select slot="content" class="storage-location">
+                <option value="null">Nothing</option>
+                <option value="local">Local</option>
+                <option value="global">Global</option>
+            </ui-select>
         </ui-prop>
         <ui-prop>
             <ui-label slot="label">Plugin Name</ui-label>
@@ -227,6 +235,12 @@ export const $ = {
     pluginLocation: '.plugin-location',
     gameId: '.game-id',
     saveBtn: '.save-btn',
+    sidebarItem1: '.sidebar-item[data-tab="1"]',
+    sidebarItem2: '.sidebar-item[data-tab="2"]',
+    sidebarItem3: '.sidebar-item[data-tab="3"]',
+    tabContent1: '.tab-content-1',
+    tabContent2: '.tab-content-2',
+    tabContent3: '.tab-content-3',
 };
 
 let activePanel: any = null;
@@ -257,21 +271,7 @@ const onWindowFocus = () => {
 export const ready = async function(this: any) {
     activePanel = this;
 
-    // Set select options
-    if (this.$.targetPlatform) {
-        this.$.targetPlatform.items = [
-            { value: 'game_distribution', label: 'Game Distribution' },
-            { value: 'tiktok', label: 'TikTok' },
-            { value: 'crazy_game', label: 'Crazy Game' }
-        ];
-    }
-    if (this.$.storageLocation) {
-        this.$.storageLocation.items = [
-            { value: 'null', label: 'Nothing' },
-            { value: 'local', label: 'Local' },
-            { value: 'global', label: 'Global' }
-        ];
-    }
+    // Select options are defined inline in the template via <option> elements
 
     // Load initial values
     await updateUIValues(this);
@@ -291,18 +291,19 @@ export const ready = async function(this: any) {
     });
 
     // Tab Switching
-    const root = this.shadowRoot || this;
-    const sidebarItems = root.querySelectorAll('.sidebar-item');
-    const tabContents = root.querySelectorAll('.tab-content');
+    const sidebarItems = [this.$.sidebarItem1, this.$.sidebarItem2, this.$.sidebarItem3];
+    const tabContents = [this.$.tabContent1, this.$.tabContent2, this.$.tabContent3];
 
-    sidebarItems.forEach((item: any) => {
+    sidebarItems.forEach((item: any, index: number) => {
+        if (!item) return;
         item.addEventListener('click', () => {
-            sidebarItems.forEach((i: any) => i.classList.remove('active'));
+            sidebarItems.forEach((i: any) => i?.classList.remove('active'));
             item.classList.add('active');
 
-            tabContents.forEach((content: any) => content.style.display = 'none');
-            const tabId = item.getAttribute('data-tab');
-            const targetContent = root.querySelector(`.tab-content-${tabId}`) as any;
+            tabContents.forEach((content: any) => {
+                if (content) content.style.display = 'none';
+            });
+            const targetContent = tabContents[index];
             if (targetContent) targetContent.style.display = 'flex';
 
             this.$.sidebar.classList.remove('show');
