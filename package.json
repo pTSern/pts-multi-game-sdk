@@ -17,6 +17,17 @@
         "@types/node": "^18.17.1",
         "typescript": "^5.8.2"
     },
+    "panels": {
+        "default": {
+            "title": "pTS_Multi_Game_SDK",
+            "type": "dockable",
+            "main": "dist/panel.js",
+            "size": {
+                "min-width": 350,
+                "min-height": 250
+            }
+        }
+    },
     "contributions": {
 
         "asset-db": {
@@ -211,6 +222,11 @@
             }
         },
         "messages": {
+            "open-panel": {
+                "methods": [
+                    "openPanel"
+                ]
+            },
             "profile::project::game_distribution::changed_game_id": {
                 "methods": [
                     "onChangedGameId"
@@ -236,6 +252,13 @@
                     "onSaved"
                 ]
             }
-        }
+        },
+        "menu": [
+            {
+                "path": "i18n:pts-multi-game-sdk.panel",
+                "label": "Multi Game SDK Manager",
+                "message": "open-panel"
+            }
+        ]
     }
 }
