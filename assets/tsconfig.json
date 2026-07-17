@@ -19,11 +19,11 @@
             "db://assets/*": [
                 "../../../assets/*"
             ],
-            "db://pts-asset/*": [
-                "../../pts-asset/assets/*"
-            ],
             "db://pts-core/*": [
                 "../../pts-core/assets/*"
+            ],
+            "db://pts-asset/*": [
+                "../../pts-asset/assets/*"
             ],
             "db://pts-multi-game-sdk/*": [
                 "./*"
@@ -33,6 +33,12 @@
     "include": [
         "**/*",
         ".dev/**/*",
+        "../../pts-core/**/*.d.ts",
+        "../../pts-core/assets/**/*.ts",
+        "../../pts-core/assets/.dev/**/*.d.ts",
+        "../../pts-asset/**/*.d.ts",
+        "../../pts-asset/assets/**/*.ts",
+        "../../pts-asset/assets/.dev/**/*.d.ts",
         "../../../assets/.dev/**/*.d.ts"
     ]
 }
