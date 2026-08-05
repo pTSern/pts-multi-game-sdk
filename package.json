@@ -38,11 +38,6 @@
         },
         "profile": {
             "project": {
-                "global_variable_key_mg": {
-                    "default": "pTS.settings",
-                    "message": "profile::project::changed",
-                    "label": "Global Variable Key"
-                },
                 "head_version": {
                     "default": 1,
                     "message": "profile::project::changed",
@@ -64,27 +59,12 @@
                     "message": "profile::project::changed",
                     "label": "Prefix Key"
                 },
-                "storage_location": {
-                    "default": "null",
-                    "message": "profile::project::changed",
-                    "label": "Storage Location"
-                },
                 "btn_save": {
                     "default": false,
                     "message": "profile::project::save",
                     "label": "Btn Save",
                     "data": "Save",
                     "value": "Save 2"
-                },
-                "plugin_name_mg": {
-                    "default": "_game_data_manager",
-                    "message": "profile::project::changed_location",
-                    "label": "Plugin Name"
-                },
-                "plugin_location_mg": {
-                    "default": "",
-                    "message": "profile::project::changed_location",
-                    "label": "Plugin Location"
                 },
                 "game_distribution_game_id": {
                     "default": "",
@@ -155,49 +135,6 @@
                 }
             },
             "tab_2": {
-                "label": "Options",
-                "content": {
-                    "global_variable_key_mg": {
-                        "ui": "ui-input",
-                        "attributes": {
-                            "tooltip": "The key that storage this config on global variable. \nUse `.` for chain object.",
-                            "show-clear": true
-                        }
-                    },
-                    "storage_location": {
-                        "ui": "ui-select",
-                        "items": [
-                            {
-                                "value": "null",
-                                "label": "Nothing"
-                            },
-                            {
-                                "value": "local",
-                                "label": "Local"
-                            },
-                            {
-                                "value": "global",
-                                "label": "Global"
-                            }
-                        ]
-                    },
-                    "plugin_name_mg": {
-                        "ui": "ui-input",
-                        "attributes": {
-                            "show-clear": true
-                        }
-                    },
-                    "plugin_location_mg": {
-                        "ui": "ui-file",
-                        "attributes": {
-                            "protocols": "project",
-                            "value": "project://assets/",
-                            "type": "directory"
-                        }
-                    }
-                }
-            },
-            "tab_3": {
                 "label": "Game Distribution",
                 "content": {
                     "game_distribution_game_id": {
@@ -209,12 +146,12 @@
                     }
                 }
             },
-            "tab_4": {
+            "tab_3": {
                 "label": "TikTok",
                 "content": {
                 }
             },
-            "tab_5": {
+            "tab_4": {
                 "label": "Crazy Game",
                 "content": {
 
@@ -235,11 +172,6 @@
             "profile::project::target_platform_changed": {
                 "methods": [
                     "onChangedPlatform"
-                ]
-            },
-            "profile::project::changed_location": {
-                "methods": [
-                    "onChangedLocation"
                 ]
             },
             "profile::project::changed": {

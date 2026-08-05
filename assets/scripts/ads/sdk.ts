@@ -11,3 +11,5 @@ export abstract class Ads_SDK {
 
     //protected _event = new pDriver.Handler<_TEvent>()
 }
+
+

@@ -14,8 +14,7 @@ export const template = `
 <div class="side-bar-popup">
     <div class="sidebar-title">SDK Manager</div>
     <div class="sidebar-item active" data-tab="1">Data Manager</div>
-    <div class="sidebar-item" data-tab="2">Options</div>
-    <div class="sidebar-item" data-tab="3">Game Distribution</div>
+    <div class="sidebar-item" data-tab="2">Game Distribution</div>
 </div>
 
 <div class="main-content">
@@ -48,30 +47,6 @@ export const template = `
     </div>
 
     <div class="tab-content tab-content-2" style="display: none;">
-        <h3>Options</h3>
-        <ui-prop>
-            <ui-label slot="label">Global Variable Key</ui-label>
-            <ui-input slot="content" class="global-variable-key" show-clear></ui-input>
-        </ui-prop>
-        <ui-prop>
-            <ui-label slot="label">Storage Location</ui-label>
-            <ui-select slot="content" class="storage-location">
-                <option value="null">Nothing</option>
-                <option value="local">Local</option>
-                <option value="global">Global</option>
-            </ui-select>
-        </ui-prop>
-        <ui-prop>
-            <ui-label slot="label">Plugin Name</ui-label>
-            <ui-input slot="content" class="plugin-name" show-clear></ui-input>
-        </ui-prop>
-        <ui-prop>
-            <ui-label slot="label">Plugin Location</ui-label>
-            <ui-file slot="content" class="plugin-location" type="directory" protocols="project"></ui-file>
-        </ui-prop>
-    </div>
-
-    <div class="tab-content tab-content-3" style="display: none;">
         <h3>Game Distribution</h3>
         <ui-prop>
             <ui-label slot="label">Game ID</ui-label>
@@ -229,18 +204,12 @@ export const $ = {
     tailVersion: '.tail-version',
     prefixKey: '.prefix-key',
     targetPlatform: '.target-platform',
-    globalVariableKey: '.global-variable-key',
-    storageLocation: '.storage-location',
-    pluginName: '.plugin-name',
-    pluginLocation: '.plugin-location',
     gameId: '.game-id',
     saveBtn: '.save-btn',
     sidebarItem1: '.sidebar-item[data-tab="1"]',
     sidebarItem2: '.sidebar-item[data-tab="2"]',
-    sidebarItem3: '.sidebar-item[data-tab="3"]',
     tabContent1: '.tab-content-1',
     tabContent2: '.tab-content-2',
-    tabContent3: '.tab-content-3',
 };
 
 let activePanel: any = null;
@@ -253,12 +222,6 @@ async function updateUIValues(thisAny: any) {
     if (thisAny.$.tailVersion) thisAny.$.tailVersion.value = profile.tail_version ?? 1;
     if (thisAny.$.prefixKey) thisAny.$.prefixKey.value = profile.prefix_key ?? 'game$_$';
     if (thisAny.$.targetPlatform) thisAny.$.targetPlatform.value = profile.target_platform ?? 'game_distribution';
-
-    if (thisAny.$.globalVariableKey) thisAny.$.globalVariableKey.value = profile.global_variable_key_mg ?? 'pTS.settings';
-    if (thisAny.$.storageLocation) thisAny.$.storageLocation.value = profile.storage_location ?? 'null';
-    if (thisAny.$.pluginName) thisAny.$.pluginName.value = profile.plugin_name_mg ?? '_game_data_manager';
-    if (thisAny.$.pluginLocation) thisAny.$.pluginLocation.value = profile.plugin_location_mg ?? '';
-
     if (thisAny.$.gameId) thisAny.$.gameId.value = profile.game_distribution_game_id ?? '';
 }
 
@@ -270,8 +233,6 @@ const onWindowFocus = () => {
 
 export const ready = async function(this: any) {
     activePanel = this;
-
-    // Select options are defined inline in the template via <option> elements
 
     // Load initial values
     await updateUIValues(this);
@@ -291,8 +252,8 @@ export const ready = async function(this: any) {
     });
 
     // Tab Switching
-    const sidebarItems = [this.$.sidebarItem1, this.$.sidebarItem2, this.$.sidebarItem3];
-    const tabContents = [this.$.tabContent1, this.$.tabContent2, this.$.tabContent3];
+    const sidebarItems = [this.$.sidebarItem1, this.$.sidebarItem2];
+    const tabContents = [this.$.tabContent1, this.$.tabContent2];
 
     sidebarItems.forEach((item: any, index: number) => {
         if (!item) return;
@@ -335,20 +296,6 @@ export const ready = async function(this: any) {
         save('target_platform', this.$.targetPlatform.value, 'profile::project::target_platform_changed');
     });
 
-    // Listeners for Options
-    this.$.globalVariableKey?.addEventListener('confirm', () => {
-        save('global_variable_key_mg', this.$.globalVariableKey.value, 'profile::project::changed');
-    });
-    this.$.storageLocation?.addEventListener('change', () => {
-        save('storage_location', this.$.storageLocation.value, 'profile::project::changed');
-    });
-    this.$.pluginName?.addEventListener('confirm', () => {
-        save('plugin_name_mg', this.$.pluginName.value, 'profile::project::changed_location');
-    });
-    this.$.pluginLocation?.addEventListener('confirm', () => {
-        save('plugin_location_mg', this.$.pluginLocation.value, 'profile::project::changed_location');
-    });
-
     // Listeners for Game Distribution
     this.$.gameId?.addEventListener('confirm', () => {
         save('game_distribution_game_id', this.$.gameId.value, 'profile::project::game_distribution::changed_game_id');
@@ -364,3 +311,4 @@ export const close = function(this: any) {
     window.removeEventListener('focus', onWindowFocus);
     activePanel = null;
 };
+

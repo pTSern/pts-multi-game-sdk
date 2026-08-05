@@ -1,9 +1,9 @@
 import { director, sys } from "cc";
 import { Ads_SDK } from "./sdk";
 import { pGlobal } from "db://pts-core/scripts/utils";
+import { DEV } from "cc/env";
 
 export class Ads_GameDistribution extends Ads_SDK {
-
     init(gameId: string): void {
         const _opt: gdsdk.IOptions = {
             gameId,
@@ -59,16 +59,18 @@ export class Ads_GameDistribution extends Ads_SDK {
                     let _key = _map.get(k);
                     let _value = null;
 
+                    const _jsonVal = JSON.stringify(v);
+
                     if(!_key) {
-                        [_key, _value] = await Promise.all([pGlobal.gzip(k), pGlobal.gzip(v)])
+                        [_key, _value] = await Promise.all([pGlobal.gzip(k), pGlobal.gzip(_jsonVal)])
                         _map.set(k, _key);
 
                     } else {
-                        _value = await pGlobal.gzip(v);
+                        _value = await pGlobal.gzip(_jsonVal);
                     }
 
-                    sys.localStorage.setItem(_key, _value)
-
+                    sys.localStorage.setItem(_key, _value);
+                    DEV && console.log("[Storage] >> Set key:", k, "\nValue:", v, "\nCompressed key:", _key, "\nCompressed value:", _value);
                 },
                 async get(k) {
                     let _key = _map.get(k);
@@ -78,8 +80,17 @@ export class Ads_GameDistribution extends Ads_SDK {
                     }
 
                     const _val = sys.localStorage.getItem(_key);
+                    if(!_val) return null;
 
-                    return pGlobal.unzip(_val);
+
+                    let _unzipped = await pGlobal.unzip(_val);
+                    let _err: Error | null = null;
+                    try {
+                        _unzipped = JSON.parse(_unzipped);
+                    } catch (e) { _unzipped = undefined }
+
+                    DEV && console.log("[Storage] >> Get key:", k, "\nCompressed key:", _key, "\nCompressed value:", _val, "\nUnzipped value:", _unzipped);
+                    return _unzipped;
                 }
             }
         })
@@ -99,5 +110,5 @@ export class Ads_GameDistribution extends Ads_SDK {
     protected _isValid(): boolean {
         return typeof gdsdk !='undefined' && gdsdk !== undefined && gdsdk.preloadAd !== undefined && gdsdk.showAd !== undefined;
     }
-
 }
+
