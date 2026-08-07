@@ -1,6 +1,6 @@
 import { director, sys } from "cc";
 import { Ads_SDK } from "./sdk";
-import { pGlobal } from "db://pts-core/scripts/utils";
+import { pConst, pGlobal } from "db://pts-core/scripts/utils";
 import { DEV } from "cc/env";
 
 export class Ads_GameDistribution extends Ads_SDK {
