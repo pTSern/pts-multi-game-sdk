@@ -1,6 +1,6 @@
 import { director, sys } from "cc";
 import { Ads_SDK } from "./sdk";
-import { pConst, pGlobal } from "db://pts-core/scripts/utils";
+import { pGlobal } from "db://pts-core/scripts/utils";
 import { DEV } from "cc/env";
 
 export class Ads_GameDistribution extends Ads_SDK {
@@ -56,21 +56,26 @@ export class Ads_GameDistribution extends Ads_SDK {
             is_ambiguous: true,
             asynctify: {
                 async set(k, v) {
-                    let _key = _map.get(k);
-                    let _value = null;
+                    try {
+                        let _key = _map.get(k);
+                        let _value = null;
 
-                    const _jsonVal = JSON.stringify(v);
+                        const _jsonVal = JSON.stringify(v);
 
-                    if(!_key) {
-                        [_key, _value] = await Promise.all([pGlobal.gzip(k), pGlobal.gzip(_jsonVal)])
-                        _map.set(k, _key);
+                        if(!_key) {
+                            [_key, _value] = await Promise.all([pGlobal.gzip(k), pGlobal.gzip(_jsonVal)])
+                            _map.set(k, _key);
 
-                    } else {
-                        _value = await pGlobal.gzip(_jsonVal);
+                        } else {
+                            _value = await pGlobal.gzip(_jsonVal);
+                        }
+
+                        sys.localStorage.setItem(_key, _value);
+                        DEV && console.log("[Storage] >> Set key:", k, "\nValue:", v, "\nCompressed key:", _key, "\nCompressed value:", _value);
+                    } catch (error) {
+                        DEV && console.error("[Storage] >> Failed to set key:", k, error);
+                        throw error;
                     }
-
-                    sys.localStorage.setItem(_key, _value);
-                    DEV && console.log("[Storage] >> Set key:", k, "\nValue:", v, "\nCompressed key:", _key, "\nCompressed value:", _value);
                 },
                 async get(k) {
                     let _key = _map.get(k);
