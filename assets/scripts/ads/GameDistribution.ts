@@ -125,22 +125,27 @@ export class Ads_GameDistribution extends Ads_SDK {
     protected _onShowRewardAdsComplete(): void {
         this._onSuccesses.forEach(_ => _());
         this._onSuccesses = [];
+        this._onFinallys.forEach(_ => _());
+        this._onFinallys = [];
         console.log("[GameDistribution] >> Reward ads completed.");
     }
 
     protected _onSuccesses: pFlex.TFunc[] = [];
     protected _onFaileds: pFlex.TFunc[] = [];
+    protected _onFinallys: pFlex.TFunc[] = [];
 
     protected _onShowRewardAdsFailed(): void {
         this._onFaileds.forEach(_ => _());
         this._onFaileds = [];
-        console.log("[GameDistribution] >> Reward ads failed.");
+
+        this._onFinallys.forEach(_ => _());
+        this._onFinallys = [];
     }
 
     showInterstitialAds(): void {
     }
 
-    showRewardAds(onSuccess: pFlex.TFunc, onFailed: pFlex.TFunc): void {
+    showRewardAds(onSuccess: pFlex.TFunc, onFailed: pFlex.TFunc, _onFinallys: pFlex.TFunc): void {
         if(gdsdk !== undefined && gdsdk !== undefined) {
             this._onSuccesses.push(onSuccess);
             this._onFaileds.push(onFailed);
