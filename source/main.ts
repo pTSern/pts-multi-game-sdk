@@ -16,28 +16,82 @@ export function load() {
 
 export function unload() {}
 
+async function _syncProfileAndShipping(key?: string, value?: any) {
+    try {
+        const profile = await Editor.Profile.getProject(pkg.name) as any || {};
+        Object.assign(__config_, profile);
+    } catch (e) {}
+
+    if (key !== undefined && value !== undefined) {
+        __config_[key] = value;
+    }
+
+    await _shippingProjectSettingPlugin();
+}
+
 export const methods: { [key: string]: (...any: any) => any } = {
     openPanel() {
         Editor.Panel.open(pkg.name);
     },
-    onChangedGameId: function() {
-
+    onChangedGameId: async function(key: any, value: any) {
+        const val = value !== undefined ? value : (typeof key === 'string' ? key : '');
+        await _syncProfileAndShipping('game_distribution_game_id', val);
     },
-    onChangedPlatform: function(key: any, value: any) {
+    onChangedTiktokGameId: async function(key: any, value: any) {
+        const val = value !== undefined ? value : (typeof key === 'string' ? key : '');
+        await _syncProfileAndShipping('tiktok_game_id', val);
+    },
+    onChangedCrazyGameGameId: async function(key: any, value: any) {
+        const val = value !== undefined ? value : (typeof key === 'string' ? key : '');
+        await _syncProfileAndShipping('crazy_game_game_id', val);
+    },
+    onChangedPlatform: async function(key: any, value: any) {
         const val = typeof value === 'string' ? value : (typeof key === 'string' ? key : 'game_distribution');
         __config_.target_platform = val;
-        _shippingProjectSettingPlugin();
+        await _syncProfileAndShipping('target_platform', val);
     },
-    onChangedSetting: function<_TKey extends keyof _IConfig>(key: _TKey, value: _IConfig[_TKey]) {
-        __config_[key] = value;
-        _shippingProjectSettingPlugin();
+    onChangedSetting: async function<_TKey extends keyof _IConfig>(key: _TKey, value: _IConfig[_TKey]) {
+        await _syncProfileAndShipping(key as string, value);
     },
-    onSaved: function() {
-        Editor.Profile.getProject(pkg.name).then(async _ => {
-            _shippingProjectSettingPlugin();
-        });
+    onSaved: async function() {
+        await _syncProfileAndShipping();
     },
 };
+
+function _getActivePlatformFields(platform: string, config: _IConfig): Record<string, any> {
+    const fields: Record<string, any> = {};
+    const prefix = `${platform}_`;
+
+    // 1. Collect all keys matching the platform prefix (e.g. game_distribution_game_id -> game_id)
+    for (const key of Object.keys(config)) {
+        if (key.startsWith(prefix)) {
+            const propName = key.substring(prefix.length);
+            fields[propName] = config[key];
+        }
+    }
+
+    // 2. Explicit mappings for known platform profiles
+    if (platform === 'game_distribution') {
+        if (fields.game_id === undefined && config.game_distribution_game_id !== undefined) {
+            fields.game_id = config.game_distribution_game_id;
+        }
+    } else if (platform === 'tiktok') {
+        if (fields.game_id === undefined && config.tiktok_game_id !== undefined) {
+            fields.game_id = config.tiktok_game_id;
+        }
+    } else if (platform === 'crazy_game') {
+        if (fields.game_id === undefined && config.crazy_game_game_id !== undefined) {
+            fields.game_id = config.crazy_game_game_id;
+        }
+    }
+
+    // Ensure game_id exists on active platform fields
+    if (fields.game_id === undefined) {
+        fields.game_id = '';
+    }
+
+    return fields;
+}
 
 async function _shippingProjectSettingPlugin() {
     if (!__config_) return;
@@ -63,13 +117,19 @@ async function _shippingProjectSettingPlugin() {
     const prefixKey = __config_.prefix_key !== undefined ? __config_.prefix_key : '';
     const platform = __config_.target_platform !== undefined ? __config_.target_platform : 'game_distribution';
 
+    const activePlatformFields = _getActivePlatformFields(platform, __config_);
+
     const parts = ['pTS', 'game', 'config'];
 
     // JS generation
     let jsCode = `const _ = Object.create(null);\n`;
-    jsCode += `_.version = "${versionStr}";\n`;
-    jsCode += `_.prefix_key = "${prefixKey}";\n`;
-    jsCode += `_.platform = "${platform}";\n`;
+    jsCode += `_.version = ${JSON.stringify(versionStr)};\n`;
+    jsCode += `_.prefix_key = ${JSON.stringify(prefixKey)};\n`;
+    jsCode += `_.platform = ${JSON.stringify(platform)};\n`;
+
+    for (const [k, v] of Object.entries(activePlatformFields)) {
+        jsCode += `_.${k} = ${JSON.stringify(v)};\n`;
+    }
 
     let current = 'globalThis';
     for (let i = 0; i < parts.length; i++) {
@@ -93,14 +153,13 @@ if (!!_$pts) {
 `;
 
     // DTS generation
-    let dtsCode = `
-interface _IData {
-   version: string;
-   prefix_key: string;
-   platform: string;
-}
+    let dtsCode = `\ninterface _IData {\n   version: string;\n   prefix_key: string;\n   platform: string;\n`;
+    for (const [k, v] of Object.entries(activePlatformFields)) {
+        const typeStr = typeof v === 'number' ? 'number' : (typeof v === 'boolean' ? 'boolean' : 'string');
+        dtsCode += `   ${k}: ${typeStr};\n`;
+    }
+    dtsCode += `   [key: string]: any;\n}\n\n`;
 
-`;
     for (let i = 0; i < parts.length - 1; i++) {
         const indent = '\t'.repeat(i);
         const keyword = i === 0 ? 'declare namespace' : 'export namespace';
@@ -200,10 +259,10 @@ async function _load() {
     if (__this_.is_loaded) return;
     __this_.is_loaded = true;
 
-    Editor.Profile.getProject(pkg.name).then(async _ => {
-        Object.assign(__config_, _);
-        await _shippingProjectSettingPlugin();
-    });
+    try {
+        const profile = await Editor.Profile.getProject(pkg.name) as any || {};
+        Object.assign(__config_, profile);
+    } catch (e) {}
+
+    await _shippingProjectSettingPlugin();
 }
-
-

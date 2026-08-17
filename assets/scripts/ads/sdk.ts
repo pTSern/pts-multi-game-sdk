@@ -5,7 +5,7 @@ export abstract class Ads_SDK {
 
     abstract init(...args: any[]): void
     abstract showInterstitialAds(): void
-    abstract showRewardAds(): void
+    abstract showRewardAds(onSuccess: pFlex.TFunc, onFailed: pFlex.TFunc): void
     abstract sendReplayEvent(): void
     protected abstract _isValid(): boolean
 

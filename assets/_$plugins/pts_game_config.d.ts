@@ -3,6 +3,8 @@ interface _IData {
    version: string;
    prefix_key: string;
    platform: string;
+   game_id: string;
+   [key: string]: any;
 }
 
 declare namespace pTS {

@@ -1,14 +1,19 @@
+import { _decorator, Component } from "cc";
 import { Ads_GameDistribution } from "./GameDistribution";
 import { Ads_SDK } from "./sdk";
+import { singleton } from "db://pts-core/scripts/utils/pClass";
+import { Event_Driver } from "db://pts-core/scripts/Components/Event/Event.Driver";
+import { DEV } from "cc/env";
 
-let _glb: Ads_SDK = null;
-
+let _$glb: Ads_SDK = null;
 function _initSDK(cfg: any) {
-    if (!cfg || _glb) return;
+    if (!cfg || _$glb) return;
+    //if(DEV) return
 
     if (cfg.platform === 'game_distribution') {
-        _glb = new Ads_GameDistribution();
-        _glb.init();
+        const _ads = new Ads_GameDistribution();
+        _ads.init({ game_id: DEV ? "" : cfg.game_id });
+        _$glb = _ads;
     }
 }
 
@@ -26,5 +31,33 @@ if (!!(_pTS?.bridge)) {
     }
 }
 
-export default _glb;
+export default _$glb;
 
+const { ccclass, property } = _decorator
+
+interface _I {
+    onShowRewardAds: any
+    onShowRewardAdsFailed: any
+    onShowRewardAdsComplete: any
+    onSDKReady: any
+}
+
+@ccclass('Ads_Manager')
+@singleton()
+export class Ads_Manager extends Event_Driver<_I> {
+    protected static _$bounces = ['onShowRewardAds', 'onShowRewardAdsFailed', 'onShowRewardAdsComplete', 'onSDKReady']
+
+    showRewardAds() {
+        this.emit('onShowRewardAds');
+        return new Promise<void>((resolve, reject) => {
+            _$glb.showRewardAds(() => {
+                this.emit('onShowRewardAdsComplete');
+                resolve();
+            }, () => {
+                this.emit('onShowRewardAdsFailed');
+                reject();
+            })
+        })
+    }
+
+}

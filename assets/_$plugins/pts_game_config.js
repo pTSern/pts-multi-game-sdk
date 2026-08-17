@@ -2,6 +2,7 @@ const _ = Object.create(null);
 _.version = "1.0.2";
 _.prefix_key = "wm$_$";
 _.platform = "game_distribution";
+_.game_id = "03158c0bb9eb48d9b67bdf6c3e670e93";
 globalThis['pTS'] = globalThis['pTS'] || {};
 globalThis['pTS']['game'] = globalThis['pTS']['game'] || Object.create(null);
 globalThis['pTS']['game']['config'] = _;

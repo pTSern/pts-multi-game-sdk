@@ -71,6 +71,16 @@
                     "label": "Game Id",
                     "message": "profile::project::game_distribution::changed_game_id"
                 },
+                "tiktok_game_id": {
+                    "default": "",
+                    "label": "Game Id",
+                    "message": "profile::project::tiktok::changed_game_id"
+                },
+                "crazy_game_game_id": {
+                    "default": "",
+                    "label": "Game Id",
+                    "message": "profile::project::crazy_game::changed_game_id"
+                },
                 "target_platform": {
                     "default": "game_distribution",
                     "label": "Target Platform",
@@ -141,7 +151,7 @@
                         "ui": "ui-input",
                         "attributes": {
                             "show-clear": true,
-                            "placeholder": "Place your game id here"
+                            "placeholder": "Place your Game Distribution game id here"
                         }
                     }
                 }
@@ -149,12 +159,25 @@
             "tab_3": {
                 "label": "TikTok",
                 "content": {
+                    "tiktok_game_id": {
+                        "ui": "ui-input",
+                        "attributes": {
+                            "show-clear": true,
+                            "placeholder": "Place your TikTok game id here"
+                        }
+                    }
                 }
             },
             "tab_4": {
                 "label": "Crazy Game",
                 "content": {
-
+                    "crazy_game_game_id": {
+                        "ui": "ui-input",
+                        "attributes": {
+                            "show-clear": true,
+                            "placeholder": "Place your Crazy Game game id here"
+                        }
+                    }
                 }
             }
         },
@@ -167,6 +190,16 @@
             "profile::project::game_distribution::changed_game_id": {
                 "methods": [
                     "onChangedGameId"
+                ]
+            },
+            "profile::project::tiktok::changed_game_id": {
+                "methods": [
+                    "onChangedTiktokGameId"
+                ]
+            },
+            "profile::project::crazy_game::changed_game_id": {
+                "methods": [
+                    "onChangedCrazyGameGameId"
                 ]
             },
             "profile::project::target_platform_changed": {

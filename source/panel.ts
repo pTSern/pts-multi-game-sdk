@@ -15,6 +15,8 @@ export const template = `
     <div class="sidebar-title">SDK Manager</div>
     <div class="sidebar-item active" data-tab="1">Data Manager</div>
     <div class="sidebar-item" data-tab="2">Game Distribution</div>
+    <div class="sidebar-item" data-tab="3">TikTok</div>
+    <div class="sidebar-item" data-tab="4">Crazy Game</div>
 </div>
 
 <div class="main-content">
@@ -50,7 +52,23 @@ export const template = `
         <h3>Game Distribution</h3>
         <ui-prop>
             <ui-label slot="label">Game ID</ui-label>
-            <ui-input slot="content" class="game-id" show-clear placeholder="Place your game id here"></ui-input>
+            <ui-input slot="content" class="gd-game-id" show-clear placeholder="Place your Game Distribution game id here"></ui-input>
+        </ui-prop>
+    </div>
+
+    <div class="tab-content tab-content-3" style="display: none;">
+        <h3>TikTok</h3>
+        <ui-prop>
+            <ui-label slot="label">Game ID</ui-label>
+            <ui-input slot="content" class="tiktok-game-id" show-clear placeholder="Place your TikTok game id here"></ui-input>
+        </ui-prop>
+    </div>
+
+    <div class="tab-content tab-content-4" style="display: none;">
+        <h3>Crazy Game</h3>
+        <ui-prop>
+            <ui-label slot="label">Game ID</ui-label>
+            <ui-input slot="content" class="crazygame-game-id" show-clear placeholder="Place your Crazy Game game id here"></ui-input>
         </ui-prop>
     </div>
 
@@ -204,12 +222,10 @@ export const $ = {
     tailVersion: '.tail-version',
     prefixKey: '.prefix-key',
     targetPlatform: '.target-platform',
-    gameId: '.game-id',
+    gdGameId: '.gd-game-id',
+    tiktokGameId: '.tiktok-game-id',
+    crazyGameId: '.crazygame-game-id',
     saveBtn: '.save-btn',
-    sidebarItem1: '.sidebar-item[data-tab="1"]',
-    sidebarItem2: '.sidebar-item[data-tab="2"]',
-    tabContent1: '.tab-content-1',
-    tabContent2: '.tab-content-2',
 };
 
 let activePanel: any = null;
@@ -222,7 +238,9 @@ async function updateUIValues(thisAny: any) {
     if (thisAny.$.tailVersion) thisAny.$.tailVersion.value = profile.tail_version ?? 1;
     if (thisAny.$.prefixKey) thisAny.$.prefixKey.value = profile.prefix_key ?? 'game$_$';
     if (thisAny.$.targetPlatform) thisAny.$.targetPlatform.value = profile.target_platform ?? 'game_distribution';
-    if (thisAny.$.gameId) thisAny.$.gameId.value = profile.game_distribution_game_id ?? '';
+    if (thisAny.$.gdGameId) thisAny.$.gdGameId.value = profile.game_distribution_game_id ?? '';
+    if (thisAny.$.tiktokGameId) thisAny.$.tiktokGameId.value = profile.tiktok_game_id ?? '';
+    if (thisAny.$.crazyGameId) thisAny.$.crazyGameId.value = profile.crazy_game_game_id ?? '';
 }
 
 const onWindowFocus = () => {
@@ -252,8 +270,8 @@ export const ready = async function(this: any) {
     });
 
     // Tab Switching
-    const sidebarItems = [this.$.sidebarItem1, this.$.sidebarItem2];
-    const tabContents = [this.$.tabContent1, this.$.tabContent2];
+    const sidebarItems: any[] = this.$.sidebar ? Array.from(this.$.sidebar.querySelectorAll('.sidebar-item')) : [];
+    const tabContents: any[] = this.$.mainContent ? Array.from(this.$.mainContent.querySelectorAll('.tab-content')) : [];
 
     sidebarItems.forEach((item: any, index: number) => {
         if (!item) return;
@@ -262,10 +280,10 @@ export const ready = async function(this: any) {
             item.classList.add('active');
 
             tabContents.forEach((content: any) => {
-                if (content) content.style.display = 'none';
+                if (content && content.style) content.style.display = 'none';
             });
-            const targetContent = tabContents[index];
-            if (targetContent) targetContent.style.display = 'flex';
+            const targetContent: any = tabContents[index];
+            if (targetContent && targetContent.style) targetContent.style.display = 'flex';
 
             this.$.sidebar.classList.remove('show');
             this.$.darkScreen.classList.remove('show');
@@ -297,8 +315,18 @@ export const ready = async function(this: any) {
     });
 
     // Listeners for Game Distribution
-    this.$.gameId?.addEventListener('confirm', () => {
-        save('game_distribution_game_id', this.$.gameId.value, 'profile::project::game_distribution::changed_game_id');
+    this.$.gdGameId?.addEventListener('confirm', () => {
+        save('game_distribution_game_id', this.$.gdGameId.value, 'profile::project::game_distribution::changed_game_id');
+    });
+
+    // Listeners for TikTok
+    this.$.tiktokGameId?.addEventListener('confirm', () => {
+        save('tiktok_game_id', this.$.tiktokGameId.value, 'profile::project::tiktok::changed_game_id');
+    });
+
+    // Listeners for Crazy Game
+    this.$.crazyGameId?.addEventListener('confirm', () => {
+        save('crazy_game_game_id', this.$.crazyGameId.value, 'profile::project::crazy_game::changed_game_id');
     });
 
     // Save Button
@@ -311,4 +339,3 @@ export const close = function(this: any) {
     window.removeEventListener('focus', onWindowFocus);
     activePanel = null;
 };
-
