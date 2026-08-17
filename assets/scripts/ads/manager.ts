@@ -51,7 +51,7 @@ interface _ICore {
 }
 
 @ccclass('Ads_Manager')
-export class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
+export abstract class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
     protected static _$bounces = ['onShowRewardAds', 'onShowRewardAdsFailed', 'onShowRewardAdsComplete', 'onSDKReady']
 
     @editor_property()
@@ -72,12 +72,16 @@ export class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
         pEngine.Json.event.remove(this.onShowRewardAds, { func: this.showRewardAds, binder: this });
     }
 
-    public async showRewardAds(...args: Parameters<_T['showRewardAds']>) {
+    protected abstract _onRewardAdsComplete(...args: Parameters<_T['showRewardAds']>): void
+    protected abstract _onRewardAdsFailed(error: Error, ...args: Parameters<_T['showRewardAds']>): void
 
+    public async showRewardAds(...args: Parameters<_T['showRewardAds']>) {
         this._isShowingRewardAds = true;
 
         if(this._isShowingRewardAds) {
-            this.emit('onShowRewardAdsFailed', new Error('Please wait'), ...args);
+            const _error = new Error('Please wait');
+            this.emit('onShowRewardAdsFailed', _error, ...args);
+            this._onRewardAdsFailed(_error, ...args);
             return;
         }
 
@@ -85,9 +89,11 @@ export class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
         return new Promise<void>((_rs, _rj) => {
             _$glb.showRewardAds(() => {
                 this.emit('onShowRewardAdsComplete', ...args);
+                this._onRewardAdsComplete(...args);
                 _rs();
             }, _e => {
                 this.emit('onShowRewardAdsFailed', _e, ...args);
+                this._onRewardAdsFailed(_e, ...args);
             }, () => this._isShowingRewardAds = false)
         })
     }
