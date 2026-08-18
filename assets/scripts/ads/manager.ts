@@ -11,11 +11,11 @@ let _$rs = null;
 let _$prm: Promise<Ads_SDK> = new Promise<Ads_SDK>((_rs, _rj) => _$rs = _rs);
 function _initSDK(cfg: any) {
     if (!cfg || _$glb) return;
-    if(DEV) return
+    //if(DEV) return
 
     if (cfg.platform === 'game_distribution') {
         const _ads = new Ads_GameDistribution();
-        _ads.init({ game_id: DEV ? "" : cfg.game_id });
+        _ads.init({ game_id: cfg.game_id });
         _$glb = _ads;
         _$rs(_ads);
     }

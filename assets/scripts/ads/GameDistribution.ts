@@ -55,7 +55,7 @@ export class Ads_GameDistribution extends Ads_SDK {
         }
 
         window['GD_OPTIONS'] = _opt;
-        (function (d, s, id) {
+        !DEV && (function (d, s, id) {
             var fjs = d.getElementsByTagName(s)[0];
             if (d.getElementById(id)) return;
             const js = d.createElement(s);
