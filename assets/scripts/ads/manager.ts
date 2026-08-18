@@ -48,6 +48,7 @@ interface _I {
 
 interface _ICore {
     showRewardAds: (...args: any[]) => void
+    showInterstitialAds: (...args: any[]) => void
 }
 
 @ccclass('Ads_Manager')
@@ -76,8 +77,6 @@ export abstract class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
     protected abstract _onRewardAdsFailed(error: Error, ...args: Parameters<_T['showRewardAds']>): void
 
     public async showRewardAds(...args: Parameters<_T['showRewardAds']>) {
-        this._isShowingRewardAds = true;
-
         if(this._isShowingRewardAds) {
             const _error = new Error('Please wait');
             this.emit('onShowRewardAdsFailed', _error, ...args);
@@ -85,7 +84,9 @@ export abstract class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
             return;
         }
 
+        this._isShowingRewardAds = true;
         await _$prm;
+
         return new Promise<void>((_rs, _rj) => {
             _$glb.showRewardAds(() => {
                 this.emit('onShowRewardAdsComplete', ...args);
@@ -96,6 +97,16 @@ export abstract class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
                 this._onRewardAdsFailed(_e, ...args);
             }, () => this._isShowingRewardAds = false)
         })
+    }
+
+    protected abstract _actShowInterAdsLogic(...args: Parameters<_T['showInterstitialAds']>): boolean
+    protected abstract _onShowInterAdsComplete(...args: Parameters<_T['showInterstitialAds']>): void
+
+    public async showInterstitialAds(...args: Parameters<_T['showInterstitialAds']>) {
+        if(this._actShowInterAdsLogic(...args)) {
+            _$glb.showInterstitialAds();
+            this._onShowInterAdsComplete(...args);
+        }
     }
 }
 

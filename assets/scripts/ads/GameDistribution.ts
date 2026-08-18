@@ -142,7 +142,7 @@ export class Ads_GameDistribution extends Ads_SDK {
         this._onFinallys = [];
     }
 
-    showInterstitialAds(): void {
+    showInterstitialAds() {
     }
 
     showRewardAds(onSuccess: pFlex.TFunc, onFailed: pFlex.TFunc, _onFinallys: pFlex.TFunc): void {
