@@ -1,8 +1,7 @@
-import { _decorator, Component, JsonAsset } from "cc";
+import { _decorator, JsonAsset } from "cc";
 import { Ads_GameDistribution } from "./GameDistribution";
 import { Ads_SDK } from "./sdk";
 import { Event_Driver } from "db://pts-core/scripts/Components/Event/Event.Driver";
-import { DEV } from "cc/env";
 import { editor_property } from "db://pts-core/scripts/utils/pClass";
 import { pConst, pEngine } from "db://pts-core/scripts/utils";
 
