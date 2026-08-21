@@ -80,21 +80,29 @@ export abstract class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
             const _error = new Error('Please wait');
             this.emit('onShowRewardAdsFailed', _error, ...args);
             this._onRewardAdsFailed(_error, ...args);
-            return;
+            return false;
         }
 
         this._isShowingRewardAds = true;
         await _$prm;
 
-        return new Promise<void>((_rs, _rj) => {
-            _$glb.showRewardAds(() => {
-                this.emit('onShowRewardAdsComplete', ...args);
-                this._onRewardAdsComplete(...args);
-                _rs();
-            }, _e => {
+        return new Promise<boolean>(_rs => {
+            const _failed = (_e: Error) => {
                 this.emit('onShowRewardAdsFailed', _e, ...args);
                 this._onRewardAdsFailed(_e, ...args);
-            }, () => this._isShowingRewardAds = false)
+                _rs(false);
+            }
+
+            const _finish = () => this._isShowingRewardAds = false;
+
+            try {
+                _$glb.showRewardAds(() => {
+                    this.emit('onShowRewardAdsComplete', ...args);
+                    this._onRewardAdsComplete(...args);
+                    _rs(true);
+                }, _failed, _finish);
+            } catch (_e) { _failed(_e) }
+            finally { _finish() };
         })
     }
 

@@ -220,8 +220,8 @@
         },
         "menu": [
             {
-                "path": "i18n:pts-multi-game-sdk.panel",
-                "label": "Multi Game SDK Manager",
+                "path": "i18n:menu.extension/pTS Multiple GameSDK",
+                "label": "Open Panel",
                 "message": "open-panel"
             }
         ]
