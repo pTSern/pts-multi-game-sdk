@@ -48,6 +48,7 @@ interface _I {
 interface _ICore {
     showRewardAds: (...args: any[]) => void
     showInterstitialAds: (...args: any[]) => void
+    showBannerAds: (...args: any[]) => void
 }
 
 @ccclass('Ads_Manager')
@@ -61,15 +62,30 @@ export abstract class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
     onShowRewardAds: JsonAsset[] = [];
     @property({ type: JsonAsset, group: pConst.GROUPS.get('Listener') })
     onShowInterstitialAds: JsonAsset[] = [];
+    @property({ type: JsonAsset, group: pConst.GROUPS.get('Listener') })
+    actShowBannerAds: JsonAsset[] = [];
+
+    @property({ min: 0 })
+    numRefreshBannerInterval: number = 15;
 
     protected __preload(): void {
         super.__preload();
         pEngine.Json.event.add(this.onShowRewardAds, { func: this.showRewardAds, binder: this });
+        pEngine.Json.event.add(this.onShowInterstitialAds, { func: this.showInterstitialAds, binder: this });
+        pEngine.Json.event.add(this.actShowBannerAds, { func: this.showBannerAds, binder: this });
+
+        this._refresher = this.showBannerAds.bind(this)
+        this.schedule(this._refresher, this.numRefreshBannerInterval);
     }
+
+    protected _refresher: Function
 
     protected onDestroy(): void {
         super.onDestroy();
+        this.unschedule(this._refresher);
         pEngine.Json.event.remove(this.onShowRewardAds, { func: this.showRewardAds, binder: this });
+        pEngine.Json.event.remove(this.onShowInterstitialAds, { func: this.showInterstitialAds, binder: this });
+        pEngine.Json.event.remove(this.actShowBannerAds, { func: this.showBannerAds, binder: this });
     }
 
     protected abstract _onRewardAdsComplete(...args: Parameters<_T['showRewardAds']>): void
@@ -114,6 +130,10 @@ export abstract class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
             _$glb.showInterstitialAds();
             this._onShowInterAdsComplete(...args);
         }
+    }
+
+    public showBannerAds(...args: Parameters<_T['showBannerAds']>) {
+        _$glb.showBannerAds(...args);
     }
 }
 

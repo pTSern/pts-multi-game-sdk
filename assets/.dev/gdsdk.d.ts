@@ -18,7 +18,7 @@ declare namespace gdsdk {
 	export type TEvent = TEvents.SDK | TEvents.AD | TEvents.IMA
 
 	export type TPreloadAdEvent = 'rewarded' | 'interstitial';
-	export type ShowAdOptType = 'CONTAINER_ID_TO_PUT_AD_IN'
+	export type ShowAdOptType = string
 	export type TStatus = "error" | "success" | "warning"
 
 

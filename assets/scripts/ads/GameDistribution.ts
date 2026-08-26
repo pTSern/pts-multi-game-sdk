@@ -18,9 +18,9 @@ export class Ads_GameDistribution extends Ads_SDK {
                         gdsdk.preloadAd('interstitial').then( ( ) => {
 
                         } )
-                        gdsdk.showAd(gdsdk.AdType.Display, {containerId: 'CONTAINER_ID_TO_PUT_AD_IN'})
-                            .then(() => console.info('showAd(gdsdk.AdType.Display)'))
-                            .catch(e => console.info(e));
+                        //gdsdk.showAd(gdsdk.AdType.Display, {containerId: 'pts__gd__banner__style'})
+                        //    .then(() => console.info('showAd(gdsdk.AdType.Display)'))
+                        //    .catch(e => console.info(e));
 
                         console.log("[GameDistribution] >> SDK is ready.");
                         break;
@@ -151,6 +151,13 @@ export class Ads_GameDistribution extends Ads_SDK {
             this._onFaileds.push(onFailed);
             gdsdk.showAd('rewarded');
         }
+    }
+
+    showBannerAds(id?: string): Promise<any> {
+        if(!id || typeof id !== 'string') {
+            id = 'pts__gd__banner__style';
+        }
+        return gdsdk.showAd(gdsdk.AdType.Display, { containerId: id })
     }
 
     sendReplayEvent(): void {
