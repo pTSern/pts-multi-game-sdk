@@ -146,18 +146,22 @@ export class Ads_GameDistribution extends Ads_SDK {
     }
 
     showRewardAds(onSuccess: pFlex.TFunc, onFailed: pFlex.TFunc, _onFinallys: pFlex.TFunc): void {
-        if(gdsdk !== undefined && gdsdk !== undefined) {
-            this._onSuccesses.push(onSuccess);
-            this._onFaileds.push(onFailed);
-            gdsdk.showAd('rewarded');
-        }
+        if(!this._health()) return
+        this._onSuccesses.push(onSuccess);
+        this._onFaileds.push(onFailed);
+        gdsdk.showAd('rewarded');
     }
 
     showBannerAds(id?: string): Promise<any> {
+        if(!this._health()) return
         if(!id || typeof id !== 'string') {
             id = 'pts__gd__banner__style';
         }
         return gdsdk.showAd(gdsdk.AdType.Display, { containerId: id })
+    }
+
+    protected _health() {
+        return typeof gdsdk !== 'undefined' && Boolean(gdsdk)
     }
 
     sendReplayEvent(): void {

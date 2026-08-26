@@ -4,6 +4,7 @@ import { Ads_SDK } from "./sdk";
 import { Event_Driver } from "db://pts-core/scripts/Components/Event/Event.Driver";
 import { editor_property } from "db://pts-core/scripts/utils/pClass";
 import { pConst, pEngine } from "db://pts-core/scripts/utils";
+import { DEV } from "cc/env";
 
 let _$glb: Ads_SDK = null;
 let _$rs = null;
@@ -75,7 +76,7 @@ export abstract class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
         pEngine.Json.event.add(this.actShowBannerAds, { func: this.showBannerAds, binder: this });
 
         this._refresher = this.showBannerAds.bind(this)
-        this.schedule(this._refresher, this.numRefreshBannerInterval);
+        !DEV && this.schedule(this._refresher, this.numRefreshBannerInterval);
     }
 
     protected _refresher: Function
@@ -133,6 +134,7 @@ export abstract class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
     }
 
     public showBannerAds(...args: Parameters<_T['showBannerAds']>) {
+        console.log("[Ads_Manager] >> showBannerAds", ...args, _$glb);
         _$glb.showBannerAds(...args);
     }
 }
