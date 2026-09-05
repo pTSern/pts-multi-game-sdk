@@ -1,7 +1,7 @@
 import { _decorator, director, sys } from "cc";
 import { Ads_SDK } from "./sdk";
 import { pGlobal } from "db://pts-core/scripts/utils";
-import { DEV } from "cc/env";
+import { DEBUG, DEV } from "cc/env";
 import _$glb from "./manager";
 
 interface _IOpt {
@@ -55,7 +55,7 @@ export class Ads_GameDistribution extends Ads_SDK {
         }
 
         window['GD_OPTIONS'] = _opt;
-        !DEV && (function (d, s, id) {
+        (!DEV && !DEBUG) && (function (d, s, id) {
             var fjs = d.getElementsByTagName(s)[0];
             if (d.getElementById(id)) return;
             const js = d.createElement(s);
