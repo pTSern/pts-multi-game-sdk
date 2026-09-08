@@ -2,16 +2,16 @@ import { _decorator, director, sys } from "cc";
 import { Ads_SDK } from "./sdk";
 import { pGlobal } from "db://pts-core/scripts/utils";
 import { DEBUG, DEV } from "cc/env";
-import _$glb from "./manager";
 
-interface _IOpt {
-    game_id: string,
-}
-
+@_decorator.ccclass('Ads_GameDistribution')
 export class Ads_GameDistribution extends Ads_SDK {
-    init(opt: _IOpt): void {
+    @_decorator.property({  })
+    game_id: string = "";
+
+    protected _onLoad(): void {
+        console.log("[GameDistribution] >> Init SDK >>", this.game_id);
         const _opt: gdsdk.IOptions = {
-            gameId: opt.game_id,
+            gameId: this.game_id,
             onEvent: (event: gdsdk.IEvent) => {
                 switch(event.name) {
                     case "SDK_READY": {
@@ -64,6 +64,7 @@ export class Ads_GameDistribution extends Ads_SDK {
             js.src = 'https://html5.api.gamedistribution.com/main.min.js';
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'gamedistribution-jssdk'));
+
         this._actCreateStorage();
     }
 
@@ -120,6 +121,7 @@ export class Ads_GameDistribution extends Ads_SDK {
         })
 
         pTS.bridge.set('storage', _storage);
+        console.log("[Storage] >> Created storage via Bridge >>", _storage);
     }
 
     protected _onShowRewardAdsComplete(): void {

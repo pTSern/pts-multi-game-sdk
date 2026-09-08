@@ -1,41 +1,9 @@
 import { _decorator, JsonAsset } from "cc";
-import { Ads_GameDistribution } from "./GameDistribution";
 import { Ads_SDK } from "./sdk";
 import { Event_Driver } from "db://pts-core/scripts/Components/Event/Event.Driver";
 import { editor_property } from "db://pts-core/scripts/utils/pClass";
 import { pConst, pEngine } from "db://pts-core/scripts/utils";
 import { DEV } from "cc/env";
-
-let _$glb: Ads_SDK = null;
-let _$rs = null;
-let _$prm: Promise<Ads_SDK> = new Promise<Ads_SDK>((_rs, _rj) => _$rs = _rs);
-function _initSDK(cfg: any) {
-    if (!cfg || _$glb) return;
-    //if(DEV) return
-
-    if (cfg.platform === 'game_distribution') {
-        const _ads = new Ads_GameDistribution();
-        _ads.init({ game_id: cfg.game_id });
-        _$glb = _ads;
-        _$rs(_ads);
-    }
-}
-
-const _pTS = globalThis.pTS;
-if (!!(_pTS?.bridge)) {
-    const _cfg = _pTS.bridge.get('config');
-    if (_cfg) {
-        _initSDK(_cfg);
-    } else {
-        _pTS.bridge.once('set', (_k, _cfg: any) => {
-            if (_k === 'config') {
-                _initSDK(_cfg);
-            }
-        });
-    }
-}
-
-export default _$glb;
 
 const { ccclass, property } = _decorator
 
@@ -55,6 +23,12 @@ interface _ICore {
 @ccclass('Ads_Manager')
 export abstract class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
     protected static _$bounces = ['onShowRewardAds', 'onShowRewardAdsFailed', 'onShowRewardAdsComplete', 'onSDKReady']
+
+    @property({ type: Ads_SDK })
+    pTestSDK: Ads_SDK = null;
+
+    @property({ type: Ads_SDK })
+    pProdSDK: Ads_SDK = null;
 
     @editor_property()
     protected _isShowingRewardAds: boolean = false;
@@ -79,6 +53,8 @@ export abstract class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
         !DEV && this.schedule(this._refresher, this.numRefreshBannerInterval);
     }
 
+    get sdk() { return pConst.IS_TEST ? this.pTestSDK : this.pProdSDK }
+
     protected _refresher: Function
 
     protected onDestroy(): void {
@@ -101,7 +77,6 @@ export abstract class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
         }
 
         this._isShowingRewardAds = true;
-        await _$prm;
 
         return new Promise<boolean>(_rs => {
             const _failed = (_e: Error) => {
@@ -113,7 +88,7 @@ export abstract class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
             const _finish = () => this._isShowingRewardAds = false;
 
             try {
-                _$glb.showRewardAds(() => {
+                this.sdk.showRewardAds(() => {
                     this.emit('onShowRewardAdsComplete', ...args);
                     this._onRewardAdsComplete(...args);
                     _rs(true);
@@ -128,14 +103,14 @@ export abstract class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
 
     public async showInterstitialAds(...args: Parameters<_T['showInterstitialAds']>) {
         if(this._actShowInterAdsLogic(...args)) {
-            _$glb.showInterstitialAds();
+            this.sdk.showInterstitialAds();
             this._onShowInterAdsComplete(...args);
         }
     }
 
     public showBannerAds(...args: Parameters<_T['showBannerAds']>) {
-        console.log("[Ads_Manager] >> showBannerAds", ...args, _$glb);
-        _$glb.showBannerAds(...args);
+        console.log("[Ads_Manager] >> showBannerAds", ...args, this.sdk);
+        this.sdk.showBannerAds(...args);
     }
 }
 
