@@ -64,6 +64,8 @@ export class Ads_GameDistribution extends Ads_SDK {
             js.src = 'https://html5.api.gamedistribution.com/main.min.js';
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'gamedistribution-jssdk'));
+
+        this._actCreateStorage();
     }
 
     protected _actCreateStorage() {
@@ -118,8 +120,8 @@ export class Ads_GameDistribution extends Ads_SDK {
             }
         })
 
+        pTS.bridge.set('storage', _storage);
         console.log("[Storage] >> Created storage via Bridge >>", _storage);
-        return _storage;
     }
 
     protected _onShowRewardAdsComplete(): void {
