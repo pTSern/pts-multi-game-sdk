@@ -1,10 +1,6 @@
-import { _decorator } from "cc";
-import { pTSAsset } from "db://pts-core/scripts/pTSAsset";
-const { ccclass  } = _decorator
+export abstract class Ads_SDK {
 
-@ccclass("Ads_SDK")
-export abstract class Ads_SDK extends pTSAsset {
-
+    abstract init(...args: any[]): void
     abstract showInterstitialAds(): void
     abstract showRewardAds(onSuccess: pFlex.TFunc, onFailed: pFlex.TFunc, onFinally: pFlex.TFunc): void
     abstract sendReplayEvent(): void
