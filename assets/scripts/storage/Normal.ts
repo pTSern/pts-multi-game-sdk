@@ -27,7 +27,7 @@ export class Storage_Normal extends Storage_Base {
                     if(!_val) return null;
 
                     IS_TEST && console.log("[Storage] >> Get key:", k, "\nCompressed value:", _val);
-                    return _val;
+                    return JSON.parse(_val);
                 }
             }
         })
