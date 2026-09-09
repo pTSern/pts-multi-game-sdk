@@ -57,12 +57,11 @@ export class Storage_Compression extends Storage_Base {
                     const _val = sys.localStorage.getItem(_key);
                     if(!_val) return null;
 
-
                     let _unzipped = await pGlobal.unzip(_val, this.format);
                     let _err: Error | null = null;
                     try {
                         _unzipped = JSON.parse(_unzipped);
-                    } catch (e) { _unzipped = undefined }
+                    } catch (e) { _unzipped = undefined; _err = e as Error; }
 
                     IS_TEST && console.log("[Storage] >> Get key:", k, "\nCompressed key:", _key, "\nCompressed value:", _val, "\nUnzipped value:", _unzipped);
                     return _unzipped;
