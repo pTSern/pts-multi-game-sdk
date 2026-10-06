@@ -1,9 +1,11 @@
 import { _decorator, director, sys } from "cc";
+import { pTSAsset } from "db://pts-core/scripts/pTSAsset";
 import { Ads_SDK } from "./sdk";
 import { pGlobal } from "db://pts-core/scripts/utils";
 import { DEBUG, DEV } from "cc/env";
 
 @_decorator.ccclass('Ads_GameDistribution')
+@pTSAsset.menu('SDK/Ads/GameDistribution')
 export class Ads_GameDistribution extends Ads_SDK {
     @_decorator.property({  })
     game_id: string = "";

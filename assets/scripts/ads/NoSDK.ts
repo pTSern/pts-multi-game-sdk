@@ -1,9 +1,11 @@
 import { _decorator } from 'cc';
+import { pTSAsset } from 'db://pts-core/scripts/pTSAsset';
 import { Ads_SDK } from './sdk';
 
 const { ccclass, property } = _decorator;
 
 @ccclass('NoSDK')
+@pTSAsset.menu('SDK/Ads/NoSDK')
 export class NoSDK extends Ads_SDK {
     @property({  })
     isAlwaySuccess: boolean = true;

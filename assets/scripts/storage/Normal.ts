@@ -1,10 +1,12 @@
 import { _decorator, sys } from "cc";
+import { pTSAsset } from "db://pts-core/scripts/pTSAsset";
 import { Storage_Base } from "./storage";
 import { IS_TEST } from "db://pts-core/scripts/utils/pConst";
 
 const { ccclass } = _decorator
 
 @ccclass('Storage_Normal')
+@pTSAsset.menu('SDK/Storage/Normal')
 export class Storage_Normal extends Storage_Base {
     protected _creator(): pTS.bridge.ILinearCache<any> | pTS.bridge.ISyncCache<any> {
         const _storage = pTS.bridge.replican<Record<string, any>>({

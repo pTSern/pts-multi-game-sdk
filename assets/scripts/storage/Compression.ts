@@ -1,4 +1,5 @@
 import { _decorator, sys } from "cc";
+import { pTSAsset } from "db://pts-core/scripts/pTSAsset";
 import { Storage_Base } from "./storage";
 import { pGlobal, pLazy } from "db://pts-core/scripts/utils";
 import { IS_TEST } from "db://pts-core/scripts/utils/pConst";
@@ -14,6 +15,7 @@ const _enum: Record<CompressionFormat, CompressionFormat> = {
 pLazy.enums(_enum)
 
 @ccclass('Storage_Compression')
+@pTSAsset.menu('SDK/Storage/Compression')
 export class Storage_Compression extends Storage_Base {
     @property({ type: _enum })
     format: CompressionFormat = 'gzip';
