@@ -19,7 +19,7 @@
     },
     "panels": {
         "default": {
-            "title": "pTS_Multi_Game_SDK",
+            "title": "Multi Game SDK",
             "type": "dockable",
             "main": "dist/panel.js",
             "size": {
@@ -29,7 +29,6 @@
         }
     },
     "contributions": {
-
         "asset-db": {
             "mount": {
                 "path": "./assets",
@@ -220,7 +219,7 @@
         },
         "menu": [
             {
-                "path": "i18n:menu.extension/pTS Multiple GameSDK",
+                "path": "i18n:menu.extension/pTS-Multiple-SDK",
                 "label": "Open Panel",
                 "message": "open-panel"
             }
