@@ -11,6 +11,7 @@ export abstract class Ads_SDK extends pTSAsset {
     abstract showBannerAds(...args: any[]): Promise<any>
 
     protected abstract _isValid(): boolean
+    public isOk(): boolean { return this._isValid() }
 
     //protected _event = new pDriver.Handler<_TEvent>()
 }

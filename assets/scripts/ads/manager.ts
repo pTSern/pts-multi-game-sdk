@@ -88,6 +88,12 @@ export abstract class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
             const _finish = () => this._isShowingRewardAds = false;
 
             try {
+                if(!this.sdk.isOk()) {
+                    _failed(new Error('SDK is not ready'));
+                    _finish();
+                    return;
+                }
+
                 this.sdk.showRewardAds(() => {
                     this.emit('onShowRewardAdsComplete', ...args);
                     this._onRewardAdsComplete(...args);
