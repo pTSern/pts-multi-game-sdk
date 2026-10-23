@@ -3,9 +3,10 @@ import { Storage_Base } from "./storage";
 import { pGlobal } from "db://pts-core/scripts/utils";
 import { editor_property } from "db://pts-core/scripts/utils/pClass";
 
-const { ccclass, property } = _decorator;
+const { ccclass, property, menu } = _decorator;
 
 @ccclass('Storage_YTM')
+@menu('SDK/Storage/YTM')
 export class Storage_YTM extends Storage_Base {
     @property({ min: 0.1, tooltip: "Debounce delay in seconds" })
     threshold: number = 0.5;
