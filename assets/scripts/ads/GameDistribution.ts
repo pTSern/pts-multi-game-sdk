@@ -9,6 +9,8 @@ import { DEBUG, DEV } from "cc/env";
 export class Ads_GameDistribution extends Ads_SDK {
     @_decorator.property({  })
     game_id: string = "";
+    @_decorator.property({ })
+    banner_id: string = "pts__gd__banner__style";
 
     protected _onLoad(): void {
         console.log("[GameDistribution] >> Init SDK >>", this.game_id);
@@ -154,12 +156,9 @@ export class Ads_GameDistribution extends Ads_SDK {
         gdsdk.showAd('rewarded');
     }
 
-    showBannerAds(id?: string): Promise<any> {
+    showBannerAds(): Promise<any> {
         if(!this._health()) return
-        if(!id || typeof id !== 'string') {
-            id = 'pts__gd__banner__style';
-        }
-        return gdsdk.showAd(gdsdk.AdType.Display, { containerId: id })
+        return gdsdk.showAd(gdsdk.AdType.Display, { containerId: this.banner_id })
     }
 
     protected _health() {

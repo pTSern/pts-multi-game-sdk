@@ -24,33 +24,34 @@ interface _ICore {
 export abstract class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
     protected static _$bounces = ['onShowRewardAds', 'onShowRewardAdsFailed', 'onShowRewardAdsComplete', 'onSDKReady']
 
-    @property({ type: Ads_SDK })
+    @property({ type: Ads_SDK, group: pConst.GROUPS.CORE })
     pTestSDK: Ads_SDK = null;
 
-    @property({ type: Ads_SDK })
+    @property({ type: Ads_SDK, group: pConst.GROUPS.CORE })
     pProdSDK: Ads_SDK = null;
 
     @editor_property()
     protected _isShowingRewardAds: boolean = false;
 
     @property({ type: JsonAsset, group: pConst.GROUPS.get('Listener') })
-    onShowRewardAds: JsonAsset[] = [];
+    actShowRewardAds: JsonAsset[] = [];
+
     @property({ type: JsonAsset, group: pConst.GROUPS.get('Listener') })
-    onShowInterstitialAds: JsonAsset[] = [];
+    actShowInterstitialAds: JsonAsset[] = [];
+
     @property({ type: JsonAsset, group: pConst.GROUPS.get('Listener') })
     actShowBannerAds: JsonAsset[] = [];
 
-    @property({ min: 0 })
+    @property({ min: 0, group: pConst.GROUPS.CORE })
     numRefreshBannerInterval: number = 15;
 
     protected __preload(): void {
         super.__preload();
-        pEngine.Json.event.add(this.onShowRewardAds, { func: this.showRewardAds, binder: this });
-        pEngine.Json.event.add(this.onShowInterstitialAds, { func: this.showInterstitialAds, binder: this });
+        pEngine.Json.event.add(this.actShowRewardAds, { func: this.showRewardAds, binder: this });
+        pEngine.Json.event.add(this.actShowInterstitialAds, { func: this.showInterstitialAds, binder: this });
         pEngine.Json.event.add(this.actShowBannerAds, { func: this.showBannerAds, binder: this });
 
-        this._refresher = this.showBannerAds.bind(this)
-        !DEV && this.schedule(this._refresher, this.numRefreshBannerInterval);
+        this._refresher = this._showBannerAds.bind(this)
     }
 
     get sdk() { return pConst.IS_TEST ? this.pTestSDK : this.pProdSDK }
@@ -60,8 +61,8 @@ export abstract class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
     protected onDestroy(): void {
         super.onDestroy();
         this.unschedule(this._refresher);
-        pEngine.Json.event.remove(this.onShowRewardAds, { func: this.showRewardAds, binder: this });
-        pEngine.Json.event.remove(this.onShowInterstitialAds, { func: this.showInterstitialAds, binder: this });
+        pEngine.Json.event.remove(this.actShowRewardAds, { func: this.showRewardAds, binder: this });
+        pEngine.Json.event.remove(this.actShowInterstitialAds, { func: this.showInterstitialAds, binder: this });
         pEngine.Json.event.remove(this.actShowBannerAds, { func: this.showBannerAds, binder: this });
     }
 
@@ -114,9 +115,27 @@ export abstract class Ads_Manager<_T extends _ICore> extends Event_Driver<_I> {
         }
     }
 
+    protected _bannersAdsParams: Parameters<_T['showBannerAds']> = null
+    @editor_property()
+    protected _scheduledBanner: boolean = false
+
     public showBannerAds(...args: Parameters<_T['showBannerAds']>) {
-        console.log("[Ads_Manager] >> showBannerAds", ...args, this.sdk);
-        this.sdk.showBannerAds(...args);
+        if(DEV) return;
+        this._bannersAdsParams = args;
+
+        if(this._scheduledBanner) {
+            this._showBannerAds();
+            return;
+        }
+
+        this._showBannerAds();
+        this.schedule(this._refresher, this.numRefreshBannerInterval);
+        this._scheduledBanner = true;
+    }
+
+    protected _showBannerAds() {
+        this._bannersAdsParams ? this.sdk.showBannerAds(...this._bannersAdsParams) : this.sdk.showBannerAds();
+        this._bannersAdsParams = null;
     }
 }
 
